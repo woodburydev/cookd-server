@@ -1,6 +1,6 @@
 import { IsEmail, IsNotEmpty, IsOptional } from 'class-validator';
 
-export class CreateUserDto {
+export class CreateCookDto {
   @IsOptional()
   public id: number;
 

@@ -9,22 +9,37 @@ export class TypeOrmConfigService implements TypeOrmOptionsFactory {
 
   public createTypeOrmOptions(): TypeOrmModuleOptions {
     console.log(this.config.get<string>('DATABASE_HOST'));
-
-    return {
-      type: 'postgres',
-      host: process.env.DATABASE_HOST,
-      port: parseInt(process.env.DATABASE_PORT),
-      database: process.env.DATABASE_NAME,
-      username: process.env.DATABASE_USER,
-      password: process.env.DATABASE_PASSWORD,
-      entities: ['dist/**/*.entity.{ts,js}'],
-      migrations: ['dist/migrations/*.{ts,js}'],
-      migrationsTableName: 'typeorm_migrations',
-      logger: 'file',
-      synchronize: false, // never use TRUE in production!
-      ssl: {
-        rejectUnauthorized: false,
-      },
-    };
+    if (process.env.NODE_ENV === 'PRODUCTION') {
+      return {
+        type: 'postgres',
+        host: process.env.DATABASE_HOST,
+        port: parseInt(process.env.DATABASE_PORT),
+        database: process.env.DATABASE_NAME,
+        username: process.env.DATABASE_USER,
+        password: process.env.DATABASE_PASSWORD,
+        entities: ['dist/**/*.entity.{ts,js}'],
+        migrations: ['dist/migrations/*.{ts,js}'],
+        migrationsTableName: 'typeorm_migrations',
+        logger: 'file',
+        synchronize: false, // never use TRUE in production!
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      };
+    } else {
+      return {
+        type: 'postgres',
+        host: process.env.DATABASE_HOST,
+        port: parseInt(process.env.DATABASE_PORT),
+        database: process.env.DATABASE_NAME,
+        username: process.env.DATABASE_USER,
+        password: process.env.DATABASE_PASSWORD,
+        entities: ['dist/**/*.entity.{ts,js}'],
+        migrations: ['dist/migrations/*.{ts,js}'],
+        migrationsTableName: 'typeorm_migrations',
+        logger: 'file',
+        synchronize: true, // never use TRUE in production!
+      };
+    }
   }
 }
