@@ -9,7 +9,7 @@ export class CookService {
   @InjectRepository(Cook)
   private readonly repository: Repository<Cook>;
 
-  public getCook(id: number): Promise<Cook> {
+  public getCook(id: any): Promise<Cook> {
     return this.repository.findOne(id);
   }
 

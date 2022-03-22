@@ -9,7 +9,7 @@ export class UserService {
   @InjectRepository(User)
   private readonly repository: Repository<User>;
 
-  public getUser(id: number): Promise<User> {
+  public getUser(id: any): Promise<User> {
     return this.repository.findOne(id);
   }
 
@@ -22,6 +22,11 @@ export class UserService {
 
     user.email = body.email;
     user.phone = body.phone;
+    user.firstname = body.firstname;
+    user.lastname = body.lastname;
+    user.countrycode = body.countrycode;
+    user.fbuuid = body.fbuuid;
+    user.allergies = body.allergies;
 
     return this.repository.save(user);
   }
