@@ -7,10 +7,11 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     entities: ['dist/**/*.entity.{ts,js}'],
-    migrations: ['dist/migrations/*.{ts,js}'],
+    migrations: ['dist/src/migrations/*.{ts,js}'],
     migrationsTableName: 'typeorm_migrations',
     logger: 'file',
-    synchronize: true, // never use TRUE in production!
+    synchronize: false, // never use TRUE in production!
+    migrationsRun: true,
     ssl: {
       rejectUnauthorized: false,
     },
@@ -24,9 +25,10 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
     username: process.env.DATABASE_USER,
     password: process.env.DATABASE_PASSWORD,
     entities: ['dist/**/*.entity.{ts,js}'],
-    migrations: ['dist/migrations/*.{ts,js}'],
+    migrations: ['dist/src/migrations/*.{ts,js}'],
     migrationsTableName: 'typeorm_migrations',
     logger: 'file',
-    synchronize: true, // never use TRUE in production!
+    synchronize: false, // never use TRUE in production!
+    migrationsRun: false,
   };
 }

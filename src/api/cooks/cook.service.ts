@@ -22,6 +22,10 @@ export class CookService {
 
     cook.email = body.email;
     cook.phone = body.phone;
+    cook.firstname = body.firstname;
+    cook.lastname = body.lastname;
+    cook.fbuuid = body.fbuuid;
+    cook.countrycode = body.countrycode;
 
     return this.repository.save(cook);
   }
