@@ -14,15 +14,16 @@ export class UserController {
     return this.service.getUsers();
   }
 
+  @Get(':fbuuid')
   // if we are in production, use guard so that nobody can hit endpoint and get user details
-  @Get(':id')
-  @UseGuards(FirebaseAuthGuard)
-  public getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return this.service.getUser(id);
+  // @UseGuards(FirebaseAuthGuard)
+  public getUser(@Param('fbuuid') fbuuid: string): Promise<User> {
+    return this.service.getUser(fbuuid);
   }
 
+  // protect this route via cors
   @Post()
-  public createUser(@Body() body: CreateUserDto): Promise<User> {
+  public createUser(@Body() body: CreateUserDto): Promise<{ status: string }> {
     return this.service.createUser(body);
   }
 }

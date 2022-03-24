@@ -36,5 +36,4 @@ lerna-debug.log*
 
 # Other
 *.env
-ca-certificate.crt
 package-lock.json

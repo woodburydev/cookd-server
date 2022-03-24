@@ -9,15 +9,15 @@ export class UserService {
   @InjectRepository(User)
   private readonly repository: Repository<User>;
 
-  public getUser(id: any): Promise<User> {
-    return this.repository.findOne(id);
+  public getUser(fbuuid: string): Promise<User> {
+    return this.repository.findOneBy({ fbuuid: fbuuid });
   }
 
   public getUsers(): Promise<User[]> {
     return this.repository.find();
   }
 
-  public createUser(body: CreateUserDto): Promise<User> {
+  public createUser(body: CreateUserDto): Promise<{ status: string }> {
     const user: User = new User();
 
     user.email = body.email;
@@ -27,7 +27,18 @@ export class UserService {
     user.countrycode = body.countrycode;
     user.fbuuid = body.fbuuid;
     user.allergies = body.allergies;
-
-    return this.repository.save(user);
+    return this.repository
+      .save(user)
+      .then(() => {
+        return {
+          status: 'success',
+        };
+      })
+      .catch((err) => {
+        console.log(err);
+        return {
+          status: 'error',
+        };
+      });
   }
 }

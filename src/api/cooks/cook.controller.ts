@@ -13,13 +13,16 @@ export class CookController {
     return this.service.getCooks();
   }
 
-  @Get(':id')
-  public getCook(@Param('id', ParseIntPipe) id: number): Promise<Cook> {
-    return this.service.getCook(id);
+  @Get(':fbuuid')
+  // if we are in production, use guard so that nobody can hit endpoint and get Cook details
+  // @UseGuards(FirebaseAuthGuard)
+  public getCook(@Param('fbuuid') fbuuid: string): Promise<Cook> {
+    return this.service.getCook(fbuuid);
   }
 
+  // protect this route via cors
   @Post()
-  public createCook(@Body() body: CreateCookDto): Promise<Cook> {
+  public createCook(@Body() body: CreateCookDto): Promise<{ status: string }> {
     return this.service.createCook(body);
   }
 }

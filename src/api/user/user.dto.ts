@@ -18,7 +18,6 @@ export class CreateUserDto {
   public phone: string;
 
   @IsNotEmpty()
-  @IsNotEmpty()
   public countrycode: string;
 
   @IsString()
@@ -26,6 +25,5 @@ export class CreateUserDto {
   public fbuuid: string;
 
   @IsString()
-  @IsNotEmpty()
   public allergies: string;
 }
