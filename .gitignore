@@ -37,3 +37,5 @@ lerna-debug.log*
 # Other
 *.env
 package-lock.json
+cookdChefFirebaseCred.json
+cookdFirebaseCred.json

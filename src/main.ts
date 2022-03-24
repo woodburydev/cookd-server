@@ -12,18 +12,6 @@ async function bootstrap() {
   const port: number = config.get<number>('PORT');
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
-
-  // Set the config options
-  const adminConfig: ServiceAccount = {
-    projectId: config.get<string>('FIREBASE_PROJECT_ID'),
-    privateKey: config.get<string>('FIREBASE_PRIVATE_KEY').replace(/\\n/g, '\n'),
-    clientEmail: config.get<string>('FIREBASE_CLIENT_EMAIL'),
-  };
-  // Initialize the firebase admin app
-  admin.initializeApp({
-    credential: admin.credential.cert(adminConfig),
-  });
-
   // add later
   // app.enableCors();
 
@@ -33,3 +21,29 @@ async function bootstrap() {
 }
 
 bootstrap();
+// Set the config options
+const adminConfig: ServiceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY.replace(/\\n/g, '\n'),
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+};
+
+const adminConfig2: ServiceAccount = {
+  projectId: process.env.FIREBASE_PROJECT_ID_2,
+  privateKey: process.env.FIREBASE_PRIVATE_KEY_2.replace(/\\n/g, '\n'),
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL_2,
+};
+// Initialize the firebase admin app
+export const cookdAdminSDK = admin.initializeApp(
+  {
+    credential: admin.credential.cert(adminConfig),
+  },
+  'first',
+);
+
+export const cookdChefAdminSDK = admin.initializeApp(
+  {
+    credential: admin.credential.cert(adminConfig2),
+  },
+  'second',
+);
