@@ -10,8 +10,8 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
     migrations: ['dist/src/migrations/*.{ts,js}'],
     migrationsTableName: 'typeorm_migrations',
     logger: 'file',
-    synchronize: false, // never use TRUE in production!
-    migrationsRun: true,
+    synchronize: true, // never use TRUE in production!
+    migrationsRun: false,
     ssl: {
       rejectUnauthorized: false,
     },
