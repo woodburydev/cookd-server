@@ -12,8 +12,11 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
     logger: 'file',
     synchronize: true, // never use TRUE in production!
     migrationsRun: false,
-    ssl: {
-      rejectUnauthorized: false,
+    ssl: true,
+    extra: {
+      ssl: {
+        rejectUnauthorized: false,
+      },
     },
   };
 } else {
