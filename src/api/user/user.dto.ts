@@ -1,29 +1,46 @@
-import { IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString, IsUUID } from 'class-validator';
+import { IsArray, IsEmail, IsNotEmpty, IsNumberString, IsPhoneNumber, IsString } from 'class-validator';
+import { Column } from 'typeorm';
 
 export class CreateUserDto {
   public id!: number;
 
   @IsNotEmpty()
-  public firstname: string;
-
-  @IsNotEmpty()
-  public lastname: string;
+  public displayname: string;
 
   @IsNotEmpty()
   @IsEmail()
   public email: string;
 
   @IsNotEmpty()
-  @IsNumberString()
+  @IsString()
   public phone: string;
-
-  @IsNotEmpty()
-  public countrycode: string;
 
   @IsString()
   @IsNotEmpty()
   public fbuuid: string;
 
+  @IsArray()
+  public allergies: string[];
+
+  @IsArray()
+  public cuisines: string[];
+}
+
+export class CanCreateUser {
+  @IsNotEmpty()
   @IsString()
-  public allergies: string;
+  public firstname: string;
+
+  @IsNotEmpty()
+  @IsString()
+  public lastname: string;
+
+  @IsNotEmpty()
+  @IsString()
+  // validate phone somehow
+  public phone: string;
+
+  @IsNotEmpty()
+  @IsEmail()
+  public email: string;
 }

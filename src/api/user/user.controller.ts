@@ -1,8 +1,7 @@
 import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
-import { CreateUserDto } from './user.dto';
+import { CanCreateUser, CreateUserDto } from './user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
-import { FirebaseAuthGuard } from '../auth/firebaseAuthGuard';
 
 @Controller('user')
 export class UserController {
@@ -25,5 +24,10 @@ export class UserController {
   @Post()
   public createUser(@Body() body: CreateUserDto): Promise<{ status: string }> {
     return this.service.createUser(body);
+  }
+
+  @Post('/canCreate')
+  public canCreateUser(@Body() body: CanCreateUser): Promise<{ status: boolean; reason: string }> {
+    return this.service.canCreateUser(body);
   }
 }

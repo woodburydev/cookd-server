@@ -12,17 +12,14 @@ export class User {
   public phone: string;
 
   @Column({ type: 'varchar', length: 120 })
-  public firstname: string;
-
-  @Column({ type: 'varchar', length: 120 })
-  public lastname: string;
-
-  @Column({ type: 'varchar', length: 10 })
-  public countrycode: string;
+  public displayname: string;
 
   @Column({ type: 'varchar', length: 120 })
   public fbuuid: string;
 
-  @Column({ type: 'varchar', length: 120 })
-  public allergies: string;
+  @Column('text', { array: true })
+  public allergies: string[];
+
+  @Column('text', { array: true })
+  public cuisines: string[];
 }
