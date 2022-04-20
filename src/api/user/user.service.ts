@@ -46,64 +46,26 @@ export class UserService {
   public canCreateUser(body: CanCreateUser): Promise<{ status: boolean; reason: string }> {
     return cookdAdminSDK
       .auth()
-      .getUserByPhoneNumber(body.phone)
+      .getUserByEmail(body.email)
       .then(async (user) => {
-        return cookdAdminSDK
-          .auth()
-          .getUserByEmail(body.email)
-          .then(async (user) => {
-            const { uid } = user;
-            const dbUser = await this.repository.findOneBy({ fbuuid: uid });
-            if (!dbUser) {
-              return {
-                status: false,
-                reason: 'not-in-db',
-              };
-            }
-            return {
-              status: false,
-              reason: 'invalid-email',
-            };
-          })
-          .catch(async () => {
-            const { uid, providerData } = user;
-            const dbUser = await this.repository.findOneBy({ fbuuid: uid });
-            // phone number registered for some reason, but is not inside of database nor finished registering in firebase
-            // providerData[1] === Credentials when user has auth'd with email & password.
-            if (!dbUser && !providerData[1]) {
-              return {
-                status: true,
-                reason: '',
-              };
-            } else if (!dbUser && providerData) {
-              return {
-                status: false,
-                reason: 'not-in-db',
-              };
-            }
-            return {
-              status: false,
-              reason: 'invalid-number',
-            };
-          });
+        const { uid } = user;
+        const dbUser = await this.repository.findOneBy({ fbuuid: uid });
+        if (!dbUser) {
+          return {
+            status: false,
+            reason: 'not-in-db',
+          };
+        }
+        return {
+          status: false,
+          reason: 'invalid-email',
+        };
       })
-      .catch(() =>
-        cookdAdminSDK
-          .auth()
-          .getUserByEmail(body.email)
-          .then(async () => {
-            // email exists and is in firebase, but the phone number related to this email is not.
-            return {
-              status: false,
-              reason: 'invalid-email',
-            };
-          })
-          .catch(() => {
-            return {
-              status: true,
-              reason: '',
-            };
-          }),
-      );
+      .catch(() => {
+        return {
+          status: true,
+          reason: '',
+        };
+      });
   }
 }

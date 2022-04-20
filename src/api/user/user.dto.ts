@@ -1,4 +1,5 @@
-import { IsArray, IsEmail, IsNotEmpty, IsNumberString, IsPhoneNumber, IsString } from 'class-validator';
+import { Optional } from '@nestjs/common';
+import { IsArray, IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
 import { Column } from 'typeorm';
 
 export class CreateUserDto {
@@ -27,19 +28,6 @@ export class CreateUserDto {
 }
 
 export class CanCreateUser {
-  @IsNotEmpty()
-  @IsString()
-  public firstname: string;
-
-  @IsNotEmpty()
-  @IsString()
-  public lastname: string;
-
-  @IsNotEmpty()
-  @IsString()
-  // validate phone somehow
-  public phone: string;
-
   @IsNotEmpty()
   @IsEmail()
   public email: string;
