@@ -22,4 +22,7 @@ export class User {
 
   @Column('text', { array: true })
   public cuisines: string[];
+
+  @Column('text', { array: true })
+  public foundOut: string[];
 }

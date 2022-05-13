@@ -25,6 +25,9 @@ export class CreateUserDto {
 
   @IsArray()
   public cuisines: string[];
+
+  @IsArray()
+  public foundOut: string[];
 }
 
 export class CanCreateUser {

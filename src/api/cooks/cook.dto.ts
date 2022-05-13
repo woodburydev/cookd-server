@@ -1,28 +1,35 @@
-import { IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsString } from 'class-validator';
+import { Optional } from '@nestjs/common';
+import { IsArray, IsEmail, IsNotEmpty, IsNumberString, IsOptional, IsPhoneNumber, IsString } from 'class-validator';
+import { Column } from 'typeorm';
 
 export class CreateCookDto {
-  @IsOptional()
-  public id: number;
+  public id!: number;
 
   @IsNotEmpty()
-  public firstname: string;
-
-  @IsNotEmpty()
-  public lastname: string;
+  public displayname: string;
 
   @IsNotEmpty()
   @IsEmail()
   public email: string;
 
   @IsNotEmpty()
-  @IsNumberString()
+  @IsString()
   public phone: string;
-
-  @IsNotEmpty()
-  @IsNotEmpty()
-  public countrycode: string;
 
   @IsString()
   @IsNotEmpty()
   public fbuuid: string;
+
+  @IsArray()
+  public foundOut: string[];
+  
+  @IsString()
+  @IsNotEmpty()
+  public address: string;
+}
+
+export class CanCreateCook {
+  @IsNotEmpty()
+  @IsEmail()
+  public email: string;
 }

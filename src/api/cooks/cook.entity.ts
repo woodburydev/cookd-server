@@ -3,7 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
 @Entity()
 export class Cook {
   @PrimaryGeneratedColumn()
-  public id!: number;
+  public id: number;
 
   @Column({ type: 'varchar', length: 120 })
   public email: string;
@@ -12,14 +12,14 @@ export class Cook {
   public phone: string;
 
   @Column({ type: 'varchar', length: 120 })
-  public firstname: string;
-
-  @Column({ type: 'varchar', length: 120 })
-  public lastname: string;
-
-  @Column({ type: 'varchar', length: 10 })
-  public countrycode: string;
+  public displayname: string;
 
   @Column({ type: 'varchar', length: 120 })
   public fbuuid: string;
+
+  @Column('text', { array: true })
+  public foundOut: string[];
+
+  @Column({ type: 'varchar', length: 200 })
+  public address: string;
 }

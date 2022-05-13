@@ -27,6 +27,7 @@ export class UserService {
     user.fbuuid = body.fbuuid;
     user.allergies = body.allergies;
     user.cuisines = body.cuisines;
+    user.foundOut = body.foundOut
 
     return this.repository
       .save(user)

@@ -1,5 +1,5 @@
 import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post } from '@nestjs/common';
-import { CreateCookDto } from './cook.dto';
+import { CanCreateCook, CreateCookDto } from './cook.dto';
 import { Cook } from './cook.entity';
 import { CookService } from './cook.service';
 
@@ -24,5 +24,10 @@ export class CookController {
   @Post()
   public createCook(@Body() body: CreateCookDto): Promise<{ status: string }> {
     return this.service.createCook(body);
+  }
+
+  @Post('/canCreate')
+  public canCreateCookd(@Body() body: CanCreateCook): Promise<{ status: boolean; reason: string }> {
+    return this.service.canCreateCook(body);
   }
 }

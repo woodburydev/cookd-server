@@ -1,7 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { cookdChefAdminSDK } from 'src/main';
 import { Repository } from 'typeorm';
-import { CreateCookDto } from './cook.dto';
+import { CanCreateCook, CreateCookDto } from './cook.dto';
 import { Cook } from './cook.entity';
 
 @Injectable()
@@ -22,10 +23,12 @@ export class CookService {
 
     cook.email = body.email;
     cook.phone = body.phone;
-    cook.firstname = body.firstname;
-    cook.lastname = body.lastname;
-    cook.countrycode = body.countrycode;
+    cook.displayname = body.displayname;
     cook.fbuuid = body.fbuuid;
+    cook.foundOut = body.foundOut;
+    cook.address = body.address;
+    // cook.foundOut = body.foundOut;
+
     return this.repository
       .save(cook)
       .then(() => {
@@ -37,6 +40,32 @@ export class CookService {
         console.log(err);
         return {
           status: 'error',
+        };
+      });
+  }
+
+  public canCreateCook(body: CanCreateCook): Promise<{ status: boolean; reason: string }> {
+    return cookdChefAdminSDK
+      .auth()
+      .getUserByEmail(body.email)
+      .then(async (user) => {
+        const { uid } = user;
+        const dbUser = await this.repository.findOneBy({ fbuuid: uid });
+        if (!dbUser) {
+          return {
+            status: false,
+            reason: 'not-in-db',
+          };
+        }
+        return {
+          status: false,
+          reason: 'invalid-email',
+        };
+      })
+      .catch(() => {
+        return {
+          status: true,
+          reason: '',
         };
       });
   }
