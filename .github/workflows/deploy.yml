@@ -18,7 +18,9 @@ jobs:
           script: |
             whoami
             cd /root/cookd-server
-            git pull origin main && pm2 kill
+            git pull origin main
+            source ~/.bashrc
+            pm2 kill
             # npm run prebuild
             # npm run build
             # dist/src/main.js
