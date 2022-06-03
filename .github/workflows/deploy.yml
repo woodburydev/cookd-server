@@ -15,4 +15,11 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           host: '143.244.185.46'
           username: root
-          script: whoami
+          script: |
+            whoami
+            cd /root/cookd-server
+            git pull origin main
+            pm2 kill
+            npm run prebuild
+            npm run build
+            dist/src/main.js
