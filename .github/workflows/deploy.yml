@@ -25,6 +25,6 @@ jobs:
             npm install -g
             npm i -g pm2 
             pm2 kill
-            # npm run prebuild
-            # npm run build
-            # dist/src/main.js
+            npm run prebuild
+            npm run build
+            pm2 start dist/src/main.js
