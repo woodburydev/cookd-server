@@ -20,10 +20,11 @@ jobs:
             cd /root/cookd-server
             git pull origin main
             source ~/.nvm/nvm.sh
-            nvm install 14.15.4
             nvm use 14.15.4
             node --version
-            # pm2 kill
+            npm install -g
+            npm i -g pm2 
+            pm2 kill
             # npm run prebuild
             # npm run build
             # dist/src/main.js
