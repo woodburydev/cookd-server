@@ -12,13 +12,11 @@ jobs:
   deploy:
     runs-on: macOS-latest
     steps:
-      - name: Install SSH key
-        uses: shimataro/ssh-key-action@v2
+      - name: Deploy
+        uses: appleboy/ssh-action@v0.1.2
         with:
           key: ${{ secrets.SSH_KEY }}
-          name: id_rsa # optional
-          known_hosts: ${{ secrets.KNOWN_HOSTS }}
-          # config: ${{ secrets.CONFIG }} # ssh_config; optional
-          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
-      - name: SSH into host
-        run: 'ssh root@143.244.185.46'
+          host: '143.244.185.46'
+          username: root
+          script: |
+            git pull origin main
