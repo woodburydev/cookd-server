@@ -5,12 +5,9 @@ on:
     branches:
       - main
 
-  # Allows you to run this workflow manually from the Actions a tab
-  workflow_dispatch:
-
 jobs:
   deploy:
-    runs-on: macOS-latest
+    runs-on: ubuntu-latest
     steps:
       - name: Deploy
         uses: appleboy/ssh-action@v0.1.2
