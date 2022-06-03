@@ -19,7 +19,7 @@ jobs:
             whoami
             cd /root/cookd-server
             git pull origin main
-            source /root/.bashrc
+            source ~/.nvm/nvm.sh
             nvm --version
             # nvm install 14.15.4
             # node --version
