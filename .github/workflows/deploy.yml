@@ -15,5 +15,4 @@ jobs:
           key: ${{ secrets.SSH_KEY }}
           host: '143.244.185.46'
           username: root
-          script: |
-            git pull origin main
+          script: whoami
