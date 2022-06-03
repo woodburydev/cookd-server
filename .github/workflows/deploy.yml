@@ -19,11 +19,10 @@ jobs:
             whoami
             cd /root/cookd-server
             git pull origin main
-            curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.37.2/install.sh | bash
-            source ~/.bashrc
+            source /root/.bashrc
             nvm --version
-            nvm install 14.15.4
-            node --version
+            # nvm install 14.15.4
+            # node --version
             # pm2 kill
             # npm run prebuild
             # npm run build
