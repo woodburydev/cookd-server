@@ -12,6 +12,7 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
     logger: 'file',
     synchronize: true, // never use TRUE in production!
     migrationsRun: false,
+    autoLoadEntities: true,
     ssl: true,
     extra: {
       ssl: {
@@ -30,6 +31,7 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
     entities: ['dist/**/*.entity.{ts,js}'],
     migrations: ['dist/src/migrations/*.{ts,js}'],
     migrationsTableName: 'typeorm_migrations',
+    autoLoadEntities: true,
     logger: 'file',
     synchronize: true, // never use TRUE in production!
     migrationsRun: false,
