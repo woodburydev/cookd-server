@@ -1,0 +1,30 @@
+name: CD
+
+on:
+  pull_request:
+    branches:
+      - main
+    types: [closed]
+
+  # Allows you to run this workflow manually from the Actions a tab
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    if: ${{ github.event.pull_request.merged }}
+    runs-on: macOS-latest
+    steps:
+      - name: Install SSH key
+        uses: shimataro/ssh-key-action@v2
+        with:
+          key: ${{ secrets.SSH_KEY }}
+          name: id_rsa # optional
+          known_hosts: ${{ secrets.KNOWN_HOSTS }}
+          # config: ${{ secrets.CONFIG }} # ssh_config; optional
+          if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
+      - name: SSH into server
+        script:
+          - ssh root@143.244.185.46
+      - name: Pull from main
+        script:
+          - git pull origin main
