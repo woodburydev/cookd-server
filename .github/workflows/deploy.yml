@@ -20,5 +20,5 @@ jobs:
           known_hosts: ${{ secrets.KNOWN_HOSTS }}
           # config: ${{ secrets.CONFIG }} # ssh_config; optional
           if_key_exists: fail # replace / ignore / fail; optional (defaults to fail)
-      - name: Check out Git repository
-        uses: actions/checkout@v2
+      - name: SSH into host
+        run: 'ssh root@143.244.185.46'
