@@ -1,5 +1,7 @@
+let ormConfig;
+
 if (process.env.NODE_ENV === 'PRODUCTION') {
-  module.exports = {
+  ormConfig = {
     type: 'postgres',
     host: process.env.DATABASE_HOST,
     port: parseInt(process.env.DATABASE_PORT),
@@ -21,7 +23,7 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
     },
   };
 } else {
-  module.exports = {
+  ormConfig = {
     type: 'postgres',
     host: process.env.DATABASE_HOST,
     port: parseInt(process.env.DATABASE_PORT),
@@ -37,3 +39,5 @@ if (process.env.NODE_ENV === 'PRODUCTION') {
     migrationsRun: false,
   };
 }
+
+module.exports = ormConfig;
