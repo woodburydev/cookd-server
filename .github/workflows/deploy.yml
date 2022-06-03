@@ -20,7 +20,8 @@ jobs:
             cd /root/cookd-server
             git pull origin main
             source ~/.bashrc
-            pm2 kill
+            nvm --version
+            # pm2 kill
             # npm run prebuild
             # npm run build
             # dist/src/main.js
