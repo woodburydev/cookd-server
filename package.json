@@ -2,6 +2,9 @@
   "name": "cooked-server",
   "version": "0.0.1",
   "description": "",
+  "engines": {
+    "node": "16.15.0"
+  },
   "author": "",
   "private": true,
   "license": "UNLICENSED",
