@@ -35,11 +35,7 @@ lerna-debug.log*
 !.vscode/extensions.json
 
 # Other
+*.env
 package-lock.json
 cookdChefFirebaseCred.json
 cookdFirebaseCred.json
-
-# Elastic Beanstalk Files
-.elasticbeanstalk/*
-!.elasticbeanstalk/*.cfg.yml
-!.elasticbeanstalk/*.global.yml
