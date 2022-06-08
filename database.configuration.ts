@@ -5,7 +5,7 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
     if (process.env.NODE_ENV === 'PRODUCTION') {
       return {
         type: 'postgres',
-        url: process.env.DATABASE_URL,
+        url: process.env.HEROKU_POSTGRESQL_PUCE_URL,
         entities: ['dist/**/*.entity.{ts,js}'],
         migrations: ['dist/src/migrations/*.{ts,js}'],
         migrationsTableName: 'typeorm_migrations',
