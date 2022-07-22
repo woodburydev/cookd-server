@@ -35,11 +35,7 @@ export class DatabaseConfiguration implements TypeOrmOptionsFactory {
         logger: 'file',
         synchronize: true, // never use TRUE in production!
         migrationsRun: false,
-        extra: {
-          ssl: {
-            rejectUnauthorized: false,
-          },
-        },
+        ssl: false,
       };
     }
   }
