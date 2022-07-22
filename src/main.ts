@@ -47,3 +47,6 @@ export const cookdChefAdminSDK = admin.initializeApp(
   },
   'second',
 );
+
+export const cookdChefBucket = cookdChefAdminSDK.storage().bucket('gs://cookd-chef.appspot.com');
+export const cookdBucket = cookdAdminSDK.storage().bucket('gs://cookd-f2872.appspot.com');

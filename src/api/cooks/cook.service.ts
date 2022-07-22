@@ -1,9 +1,11 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { cookdChefAdminSDK } from 'src/main';
+import { cookdChefBucket, cookdChefAdminSDK } from 'src/main';
 import { Repository } from 'typeorm';
-import { CanCreateCook, CreateCookDto } from './cook.dto';
+import { CanCreateCook, CreateCookDto, GetProfilePicture, UpdateCook, UploadProfilePicture } from './cook.dto';
 import { Cook } from './cook.entity';
+import * as sharp from 'sharp';
+import * as fsPromises from 'fs/promises';
 
 @Injectable()
 export class CookService {
@@ -25,6 +27,9 @@ export class CookService {
     cook.phone = body.phone;
     cook.displayname = body.displayname;
     cook.fbuuid = body.fbuuid;
+    cook.bio = '';
+    cook.profilePictureName = '';
+    cook.education = '';
     cook.foundOut = body.foundOut;
     cook.address = body.address;
     // cook.foundOut = body.foundOut;
@@ -68,5 +73,124 @@ export class CookService {
           reason: '',
         };
       });
+  }
+
+  public updateCook(body: UpdateCook): Promise<{ status: boolean }> {
+    const { bio, education } = body;
+    const updateObject = { ...(bio !== undefined && { bio }), ...(education !== undefined && { education }) };
+    return this.repository
+      .update({ email: body.email }, updateObject)
+      .then(() => {
+        return {
+          status: true,
+        };
+      })
+      .catch((err) => {
+        console.log(err);
+        if (err) {
+          return {
+            status: false,
+          };
+        }
+      });
+  }
+
+  public fetchCookBioData(email: string): Promise<{ bio: string; education: string }> {
+    return this.repository
+      .findOne({ select: ['bio', 'education'], where: { email: email } })
+      .then((cook) => {
+        return {
+          bio: cook.bio,
+          education: cook.education,
+        };
+      })
+      .catch((err) => {
+        console.log(err);
+        throw new NotFoundException();
+      });
+  }
+
+  public async getProfilePicture(body: GetProfilePicture): Promise<string> {
+    const { user } = body;
+    const queryResult = await this.repository.find({ select: { profilePictureName: true }, where: { email: user } });
+    const fileName = queryResult[0].profilePictureName;
+    if (fileName.length < 1) {
+      throw new NotFoundException();
+    }
+    const fileLocation = `users/${user}/profilePictures/${fileName}`;
+    const newDate = new Date();
+    newDate.setDate(newDate.getDate() + 1);
+    const file = cookdChefBucket.file(fileLocation);
+    const exists = await file.exists();
+    if (exists[0]) {
+      return file
+        .getSignedUrl({
+          action: 'read',
+          expires: newDate,
+        })
+        .then((res) => {
+          return res[0];
+        });
+    } else {
+      throw new NotFoundException();
+    }
+  }
+
+  public async uploadProfilePicture(body: UploadProfilePicture, localFileName: string): Promise<string> {
+    const { userEmail } = body;
+    const exists = await this.userExists(userEmail);
+    if (!exists) throw new NotFoundException();
+
+    try {
+      const bucketLocation = `users/${userEmail}/profilePictures/`;
+
+      // resize locally saved image
+      await sharp(`./uploads/${localFileName}`).resize(500, 500).toFile(`./uploads/resized-${localFileName}`);
+
+      // upload image to firebase
+      await cookdChefBucket.upload(`./uploads/resized-${localFileName}`, {
+        destination: bucketLocation + localFileName,
+      });
+
+      // remove old image from bucket.
+      const { profilePictureName } = await this.repository.findOne({
+        where: { email: userEmail },
+        select: { profilePictureName: true },
+      });
+
+      if (profilePictureName.length > 0) {
+        await cookdChefBucket
+          .file(bucketLocation + profilePictureName)
+          .delete()
+          .then((result) => {
+            if (result[0].statusCode === 204) {
+              // success
+            }
+          })
+          .catch(() => {
+            console.log("Couldn't delete, item likely doesn't exist.");
+          });
+      }
+
+      // update database with new string
+      await this.repository.update({ email: userEmail }, { profilePictureName: localFileName });
+      // remove images from local source
+      await fsPromises.unlink(`./uploads/resized-${localFileName}`);
+      await fsPromises.unlink(`./uploads/${localFileName}`);
+
+      // return link to profile picture.
+      return this.getProfilePicture({ fileName: localFileName, user: userEmail });
+    } catch {
+      // incase of error.
+      await fsPromises.unlink(`./uploads/resized-${localFileName}`);
+      await fsPromises.unlink(`./uploads/${localFileName}`);
+      throw new InternalServerErrorException();
+    }
+  }
+
+  private async userExists(email: string): Promise<boolean> {
+    const user = await this.repository.findOneBy({ email });
+    if (user) return true;
+    return false;
   }
 }

@@ -1,5 +1,20 @@
-import { Body, Controller, Get, Inject, Param, ParseIntPipe, Post, UseGuards } from '@nestjs/common';
-import { CanCreateUser, CreateUserDto } from './user.dto';
+import {
+  BadRequestException,
+  Body,
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Query,
+  UploadedFile,
+  UseInterceptors,
+  ValidationPipe,
+} from '@nestjs/common';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { diskStorage } from 'multer';
+import { uuid } from 'uuidv4';
+import { CanCreateUser, CreateUserDto, GetProfilePicture, UploadProfilePicture } from './user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
@@ -11,6 +26,13 @@ export class UserController {
   @Get('/')
   public getUsers(): Promise<User[]> {
     return this.service.getUsers();
+  }
+
+  @Get('/profilePicture')
+  public getProfilePicture(
+    @Query(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } })) body: GetProfilePicture,
+  ): Promise<string> {
+    return this.service.getProfilePicture(body);
   }
 
   @Get(':fbuuid')
@@ -29,5 +51,21 @@ export class UserController {
   @Post('/canCreate')
   public canCreateUser(@Body() body: CanCreateUser): Promise<{ status: boolean; reason: string }> {
     return this.service.canCreateUser(body);
+  }
+
+  @Post('/profilePicture')
+  @UseInterceptors(
+    FileInterceptor('file', {
+      storage: diskStorage({
+        destination: './uploads/',
+        filename: (req, file, cb) => {
+          cb(null, uuid() + file.originalname);
+        },
+      }),
+    }),
+  )
+  public postProfilePicture(@UploadedFile() file: Express.Multer.File, @Body() userName: UploadProfilePicture) {
+    if (!file) throw new BadRequestException();
+    return this.service.uploadProfilePicture(userName, file.filename);
   }
 }

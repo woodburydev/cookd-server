@@ -22,4 +22,13 @@ export class Cook {
 
   @Column({ type: 'varchar', length: 200 })
   public address: string;
+
+  @Column({ type: 'varchar', length: 120 })
+  public profilePictureName: string;
+
+  @Column({ type: 'varchar', length: 300 })
+  public bio: string;
+
+  @Column({ type: 'varchar', length: 200 })
+  public education: string;
 }

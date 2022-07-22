@@ -35,3 +35,30 @@ export class CanCreateUser {
   @IsEmail()
   public email: string;
 }
+
+export class UpdateUser {
+  @IsString()
+  @IsOptional()
+  public bio: string;
+
+  @IsString()
+  @IsOptional()
+  public education: string;
+
+  @IsEmail()
+  public email: string;
+}
+
+export class GetProfilePicture {
+  // this is only used for a private function, not for the API. Please remove later.
+  @IsOptional()
+  fileName?: string;
+
+  @IsString()
+  user: string;
+}
+
+export class UploadProfilePicture {
+  @IsEmail()
+  public userEmail: string;
+}

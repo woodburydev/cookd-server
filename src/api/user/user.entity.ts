@@ -25,4 +25,7 @@ export class User {
 
   @Column('text', { array: true })
   public foundOut: string[];
+
+  @Column({ type: 'varchar', length: 120 })
+  public profilePictureName: string;
 }
