@@ -107,7 +107,7 @@ export class UserService {
       const bucketLocation = `users/${userEmail}/profilePictures/`;
 
       // resize locally saved image
-      await sharp(`./uploads/${localFileName}`).resize(500, 500).toFile(`./uploads/resized-${localFileName}`);
+      await sharp(`./uploads/${localFileName}`).resize(500, 500).withMetadata().toFile(`./uploads/resized-${localFileName}`);
 
       // upload image to firebase
       await cookdBucket.upload(`./uploads/resized-${localFileName}`, {
