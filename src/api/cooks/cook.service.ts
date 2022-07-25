@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { cookdChefBucket, cookdChefAdminSDK } from 'src/main';
 import { Repository } from 'typeorm';
@@ -112,6 +112,11 @@ export class CookService {
 
   public async getProfilePicture(body: GetProfilePicture): Promise<string> {
     const { user } = body;
+    // if !user throw bad request -> is loading
+    // if user but profilePicture is empty string throw not found exception
+    if (!user) {
+      throw new NotFoundException();
+    }
     const queryResult = await this.repository.find({ select: { profilePictureName: true }, where: { email: user } });
     const fileName = queryResult[0].profilePictureName;
     if (fileName.length < 1) {
@@ -129,7 +134,7 @@ export class CookService {
           expires: newDate,
         })
         .then((res) => {
-          return res[0];
+          return JSON.stringify(res[0]);
         });
     } else {
       throw new NotFoundException();

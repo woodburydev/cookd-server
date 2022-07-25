@@ -1,4 +1,4 @@
-import { Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
+import { BadRequestException, Injectable, InternalServerErrorException, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import * as sharp from 'sharp';
 import * as fsPromises from 'fs/promises';
@@ -12,8 +12,9 @@ export class UserService {
   @InjectRepository(User)
   private readonly repository: Repository<User>;
 
-  public getUser(fbuuid: string): Promise<User> {
-    return this.repository.findOneBy({ fbuuid: fbuuid });
+  public async getUser(fbuuid: string): Promise<User> {
+    const user = await this.repository.findOneBy({ fbuuid: fbuuid });
+    return user;
   }
 
   public getUsers(): Promise<User[]> {
@@ -75,6 +76,9 @@ export class UserService {
 
   public async getProfilePicture(body: GetProfilePicture): Promise<string> {
     const { user } = body;
+    if (!user) {
+      throw new NotFoundException();
+    }
     const queryResult = await this.repository.find({ select: { profilePictureName: true }, where: { email: user } });
     const fileName = queryResult[0].profilePictureName;
     if (fileName.length < 1) {
@@ -92,7 +96,7 @@ export class UserService {
           expires: newDate,
         })
         .then((res) => {
-          return res[0];
+          return JSON.stringify(res[0]);
         });
     } else {
       throw new NotFoundException();
@@ -141,7 +145,7 @@ export class UserService {
       await fsPromises.unlink(`./uploads/${localFileName}`);
 
       // return link to profile picture.
-      return this.getProfilePicture({ fileName: localFileName, user: userEmail });
+      return 'success';
     } catch {
       // incase of error.
       await fsPromises.unlink(`./uploads/resized-${localFileName}`);

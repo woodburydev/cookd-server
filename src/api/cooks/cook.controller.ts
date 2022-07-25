@@ -38,9 +38,7 @@ export class CookController {
   }
 
   @Get('/profilePicture')
-  public getProfilePicture(
-    @Query(new ValidationPipe({ transform: true, transformOptions: { enableImplicitConversion: true } })) body: GetProfilePicture,
-  ): Promise<string> {
+  public getProfilePicture(@Query() body: GetProfilePicture): Promise<string> {
     return this.service.getProfilePicture(body);
   }
 
