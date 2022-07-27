@@ -12,8 +12,9 @@ export class CookService {
   @InjectRepository(Cook)
   private readonly repository: Repository<Cook>;
 
-  public getCook(fbuuid: string): Promise<Cook> {
-    return this.repository.findOneBy({ fbuuid: fbuuid });
+  public async getCook(fbuuid: string): Promise<Cook> {
+    const user = await this.repository.findOneBy({ fbuuid: fbuuid });
+    return user;
   }
 
   public getCooks(): Promise<Cook[]> {
