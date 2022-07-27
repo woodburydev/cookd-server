@@ -39,14 +39,18 @@ export class CanCreateUser {
 export class UpdateUser {
   @IsString()
   @IsOptional()
-  public bio: string;
+  public displayname: string;
 
   @IsString()
   @IsOptional()
-  public education: string;
+  public phone: string;
 
   @IsEmail()
+  @IsOptional()
   public email: string;
+
+  @IsString()
+  public fbuuid: string;
 }
 
 export class GetProfilePicture {
@@ -59,6 +63,6 @@ export class GetProfilePicture {
 }
 
 export class UploadProfilePicture {
-  @IsEmail()
-  public userEmail: string;
+  @IsString()
+  public fbuuid: string;
 }

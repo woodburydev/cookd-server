@@ -14,7 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { diskStorage } from 'multer';
 import { uuid } from 'uuidv4';
-import { CanCreateUser, CreateUserDto, GetProfilePicture, UploadProfilePicture } from './user.dto';
+import { CanCreateUser, CreateUserDto, GetProfilePicture, UpdateUser, UploadProfilePicture } from './user.dto';
 import { User } from './user.entity';
 import { UserService } from './user.service';
 
@@ -31,6 +31,11 @@ export class UserController {
   @Get('/profilePicture')
   public getProfilePicture(@Query() body: GetProfilePicture): Promise<string> {
     return this.service.getProfilePicture(body);
+  }
+
+  @Post('/update')
+  public updateCook(@Body() body: UpdateUser): Promise<{ status: boolean }> {
+    return this.service.updateUser(body);
   }
 
   @Get(':fbuuid')
