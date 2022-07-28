@@ -75,6 +75,7 @@ export class UserService {
   }
 
   public async updateUser(body: UpdateUser): Promise<{ status: boolean }> {
+    // turn function into a try catch, in the catch rollback changes if any occur.
     const { email, fbuuid, displayname, phone } = body;
     const userExists = await this.repository.findOne({ where: { fbuuid } });
     if (!userExists) {
@@ -87,8 +88,17 @@ export class UserService {
         .then(() => {
           throw new BadRequestException('email already in-use');
         })
-        .catch(() => {
+        .catch(async () => {
           // Soft Catch (its a good thing we catch in this instance)
+          await cookdAdminSDK
+            .auth()
+            .updateUser(fbuuid, { email })
+            .then(() => {
+              console.log('Positive Response, proceed');
+            })
+            .catch(() => {
+              throw new BadRequestException('Couldnt find user.');
+            });
         });
     }
     const updateObject = {
@@ -144,6 +154,7 @@ export class UserService {
     const { fbuuid } = body;
     const exists = await this.userExists(fbuuid);
     if (!exists) throw new NotFoundException();
+    console.log(fbuuid);
 
     try {
       const bucketLocation = `users/${fbuuid}/profilePictures/`;

@@ -44,8 +44,20 @@ export class UpdateCook {
   @IsOptional()
   public education: string;
 
+  @IsString()
+  @IsOptional()
+  public displayname: string;
+
+  @IsString()
+  @IsOptional()
+  public phone: string;
+
   @IsEmail()
+  @IsOptional()
   public email: string;
+
+  @IsString()
+  public fbuuid: string;
 }
 
 export class FetchCookBioData {
@@ -63,6 +75,6 @@ export class GetProfilePicture {
 }
 
 export class UploadProfilePicture {
-  @IsEmail()
-  public userEmail: string;
+  @IsString()
+  public fbuuid: string;
 }

@@ -6,6 +6,7 @@ import { CanCreateCook, CreateCookDto, GetProfilePicture, UpdateCook, UploadProf
 import { Cook } from './cook.entity';
 import * as sharp from 'sharp';
 import * as fsPromises from 'fs/promises';
+import { UpdateUser } from '../user/user.dto';
 
 @Injectable()
 export class CookService {
@@ -76,11 +77,43 @@ export class CookService {
       });
   }
 
-  public updateCook(body: UpdateCook): Promise<{ status: boolean }> {
-    const { bio, education } = body;
-    const updateObject = { ...(bio !== undefined && { bio }), ...(education !== undefined && { education }) };
+  public async updateCook(body: UpdateCook): Promise<{ status: boolean }> {
+    // turn function into a try catch, in the catch rollback changes if any occur.
+
+    const { email, fbuuid, displayname, phone, bio, education } = body;
+    const userExists = await this.repository.findOne({ where: { fbuuid } });
+    if (!userExists) {
+      throw new BadRequestException();
+    }
+    if (email) {
+      await cookdChefAdminSDK
+        .auth()
+        .getUserByEmail(email)
+        .then(() => {
+          throw new BadRequestException('email already in-use');
+        })
+        .catch(async () => {
+          // Soft Catch (its a good thing we catch in this instance)
+          await cookdChefAdminSDK
+            .auth()
+            .updateUser(fbuuid, { email })
+            .then((res) => {
+              console.log('Positive Response, proceed');
+            })
+            .catch((err) => {
+              throw new BadRequestException('Couldnt find user in database');
+            });
+        });
+    }
+    const updateObject = {
+      ...(email !== undefined && { email }),
+      ...(displayname !== undefined && { displayname }),
+      ...(phone !== undefined && { phone }),
+      ...(bio !== undefined && { bio }),
+      ...(education !== undefined && { education }),
+    };
     return this.repository
-      .update({ email: body.email }, updateObject)
+      .update({ fbuuid }, updateObject)
       .then(() => {
         return {
           status: true,
@@ -88,11 +121,7 @@ export class CookService {
       })
       .catch((err) => {
         console.log(err);
-        if (err) {
-          return {
-            status: false,
-          };
-        }
+        throw new InternalServerErrorException();
       });
   }
 
@@ -118,7 +147,7 @@ export class CookService {
     if (!user) {
       throw new NotFoundException();
     }
-    const queryResult = await this.repository.find({ select: { profilePictureName: true }, where: { email: user } });
+    const queryResult = await this.repository.find({ select: { profilePictureName: true }, where: { fbuuid: user } });
     const fileName = queryResult[0].profilePictureName;
     if (fileName.length < 1) {
       throw new NotFoundException();
@@ -143,16 +172,15 @@ export class CookService {
   }
 
   public async uploadProfilePicture(body: UploadProfilePicture, localFileName: string): Promise<string> {
-    const { userEmail } = body;
-    const exists = await this.userExists(userEmail);
+    const { fbuuid } = body;
+    console.log(body);
+    const exists = await this.userExists(fbuuid);
     if (!exists) throw new NotFoundException();
-
     try {
-      const bucketLocation = `users/${userEmail}/profilePictures/`;
+      const bucketLocation = `users/${fbuuid}/profilePictures/`;
 
       // resize locally saved image
       await sharp(`./uploads/${localFileName}`).resize(500, 500).withMetadata().toFile(`./uploads/resized-${localFileName}`);
-
       // upload image to firebase
       await cookdChefBucket.upload(`./uploads/resized-${localFileName}`, {
         destination: bucketLocation + localFileName,
@@ -160,9 +188,11 @@ export class CookService {
 
       // remove old image from bucket.
       const { profilePictureName } = await this.repository.findOne({
-        where: { email: userEmail },
+        where: { fbuuid },
         select: { profilePictureName: true },
       });
+
+      console.log('fbuuid: ', fbuuid);
 
       if (profilePictureName.length > 0) {
         await cookdChefBucket
@@ -179,13 +209,13 @@ export class CookService {
       }
 
       // update database with new string
-      await this.repository.update({ email: userEmail }, { profilePictureName: localFileName });
+      await this.repository.update({ fbuuid }, { profilePictureName: localFileName });
       // remove images from local source
       await fsPromises.unlink(`./uploads/resized-${localFileName}`);
       await fsPromises.unlink(`./uploads/${localFileName}`);
 
       // return link to profile picture.
-      return this.getProfilePicture({ fileName: localFileName, user: userEmail });
+      return 'success';
     } catch {
       // incase of error.
       await fsPromises.unlink(`./uploads/resized-${localFileName}`);
@@ -194,8 +224,8 @@ export class CookService {
     }
   }
 
-  private async userExists(email: string): Promise<boolean> {
-    const user = await this.repository.findOneBy({ email });
+  private async userExists(fbuuid: string): Promise<boolean> {
+    const user = await this.repository.findOneBy({ fbuuid });
     if (user) return true;
     return false;
   }

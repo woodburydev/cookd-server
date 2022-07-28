@@ -34,7 +34,7 @@ export class UserController {
   }
 
   @Post('/update')
-  public updateCook(@Body() body: UpdateUser): Promise<{ status: boolean }> {
+  public updateUser(@Body() body: UpdateUser): Promise<{ status: boolean }> {
     return this.service.updateUser(body);
   }
 
