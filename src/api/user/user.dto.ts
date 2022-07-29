@@ -51,6 +51,14 @@ export class UpdateUser {
 
   @IsString()
   public fbuuid: string;
+
+  @IsArray()
+  @IsOptional()
+  public allergies: string[];
+
+  @IsArray()
+  @IsOptional()
+  public cuisines: string[];
 }
 
 export class GetProfilePicture {

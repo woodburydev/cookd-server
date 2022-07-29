@@ -76,7 +76,7 @@ export class UserService {
 
   public async updateUser(body: UpdateUser): Promise<{ status: boolean }> {
     // turn function into a try catch, in the catch rollback changes if any occur.
-    const { email, fbuuid, displayname, phone } = body;
+    const { email, fbuuid, displayname, phone, allergies, cuisines } = body;
     const userExists = await this.repository.findOne({ where: { fbuuid } });
     if (!userExists) {
       throw new BadRequestException();
@@ -105,7 +105,10 @@ export class UserService {
       ...(email !== undefined && { email }),
       ...(displayname !== undefined && { displayname }),
       ...(phone !== undefined && { phone }),
+      ...(allergies !== undefined && { allergies }),
+      ...(cuisines !== undefined && { cuisines }),
     };
+
     return this.repository
       .update({ fbuuid }, updateObject)
       .then(() => {
