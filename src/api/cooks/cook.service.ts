@@ -130,8 +130,8 @@ export class CookService {
       .findOne({ select: ['bio', 'education'], where: { email: email } })
       .then((cook) => {
         return {
-          bio: cook.bio,
-          education: cook.education,
+          bio: cook?.bio,
+          education: cook?.education,
         };
       })
       .catch((err) => {
